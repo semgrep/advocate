@@ -9,6 +9,7 @@ itself.
 :license: Apache2, see LICENSE for more details.
 
 """
+
 from collections import OrderedDict
 import hashlib
 import pickle
@@ -42,8 +43,13 @@ class Session(RequestsSession):
         # Drop any existing adapters
         self.adapters = OrderedDict()
 
-        self.mount("http://", ValidatingHTTPAdapter(validator=self.validator, **adapter_kwargs))
-        self.mount("https://", ValidatingHTTPAdapter(validator=self.validator, **adapter_kwargs))
+        self.mount(
+            "http://", ValidatingHTTPAdapter(validator=self.validator, **adapter_kwargs)
+        )
+        self.mount(
+            "https://",
+            ValidatingHTTPAdapter(validator=self.validator, **adapter_kwargs),
+        )
         self.__mount_allowed = False
 
     def mount(self, *args, **kwargs):
@@ -102,39 +108,39 @@ def get(url, **kwargs):
     """Sends a GET request.
 
     :param url: URL for the new :class:`Request` object.
-    :param \*\*kwargs: Optional arguments that ``request`` takes.
+    :param kwargs: Optional arguments that ``request`` takes.
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
 
-    kwargs.setdefault('allow_redirects', True)
-    return request('get', url, **kwargs)
+    kwargs.setdefault("allow_redirects", True)
+    return request("get", url, **kwargs)
 
 
 def options(url, **kwargs):
     """Sends a OPTIONS request.
 
     :param url: URL for the new :class:`Request` object.
-    :param \*\*kwargs: Optional arguments that ``request`` takes.
+    :param kwargs: Optional arguments that ``request`` takes.
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
 
-    kwargs.setdefault('allow_redirects', True)
-    return request('options', url, **kwargs)
+    kwargs.setdefault("allow_redirects", True)
+    return request("options", url, **kwargs)
 
 
 def head(url, **kwargs):
     """Sends a HEAD request.
 
     :param url: URL for the new :class:`Request` object.
-    :param \*\*kwargs: Optional arguments that ``request`` takes.
+    :param kwargs: Optional arguments that ``request`` takes.
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
 
-    kwargs.setdefault('allow_redirects', False)
-    return request('head', url, **kwargs)
+    kwargs.setdefault("allow_redirects", False)
+    return request("head", url, **kwargs)
 
 
 def post(url, data=None, json=None, **kwargs):
@@ -143,12 +149,12 @@ def post(url, data=None, json=None, **kwargs):
     :param url: URL for the new :class:`Request` object.
     :param data: (optional) Dictionary, bytes, or file-like object to send in the body of the :class:`Request`.
     :param json: (optional) json data to send in the body of the :class:`Request`.
-    :param \*\*kwargs: Optional arguments that ``request`` takes.
+    :param kwargs: Optional arguments that ``request`` takes.
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
 
-    return request('post', url, data=data, json=json, **kwargs)
+    return request("post", url, data=data, json=json, **kwargs)
 
 
 def put(url, data=None, **kwargs):
@@ -156,12 +162,12 @@ def put(url, data=None, **kwargs):
 
     :param url: URL for the new :class:`Request` object.
     :param data: (optional) Dictionary, bytes, or file-like object to send in the body of the :class:`Request`.
-    :param \*\*kwargs: Optional arguments that ``request`` takes.
+    :param kwargs: Optional arguments that ``request`` takes.
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
 
-    return request('put', url, data=data, **kwargs)
+    return request("put", url, data=data, **kwargs)
 
 
 def patch(url, data=None, **kwargs):
@@ -169,24 +175,24 @@ def patch(url, data=None, **kwargs):
 
     :param url: URL for the new :class:`Request` object.
     :param data: (optional) Dictionary, bytes, or file-like object to send in the body of the :class:`Request`.
-    :param \*\*kwargs: Optional arguments that ``request`` takes.
+    :param kwargs: Optional arguments that ``request`` takes.
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
 
-    return request('patch', url, data=data, **kwargs)
+    return request("patch", url, data=data, **kwargs)
 
 
 def delete(url, **kwargs):
     """Sends a DELETE request.
 
     :param url: URL for the new :class:`Request` object.
-    :param \*\*kwargs: Optional arguments that ``request`` takes.
+    :param kwargs: Optional arguments that ``request`` takes.
     :return: :class:`Response <Response>` object
     :rtype: requests.Response
     """
 
-    return request('delete', url, **kwargs)
+    return request("delete", url, **kwargs)
 
 
 class RequestsAPIWrapper:
@@ -201,6 +207,7 @@ class RequestsAPIWrapper:
         # Do this here to avoid circular import issues
         try:
             from .futures import FuturesSession
+
             have_requests_futures = True
         except ImportError as e:
             have_requests_futures = False
@@ -215,6 +222,7 @@ class RequestsAPIWrapper:
             so people should be able to subclass `wrapper.Session` and still
             get the desired validation behaviour
             """
+
             DEFAULT_VALIDATOR = outer_self.validator
 
         self._make_wrapper_cls_global(_WrappedSession)
@@ -223,7 +231,9 @@ class RequestsAPIWrapper:
 
             class _WrappedFuturesSession(FuturesSession):
                 """Like _WrappedSession, but for `FuturesSession`s"""
+
                 DEFAULT_VALIDATOR = outer_self.validator
+
             self._make_wrapper_cls_global(_WrappedFuturesSession)
 
             self.FuturesSession = _WrappedFuturesSession
@@ -252,6 +262,7 @@ class RequestsAPIWrapper:
         def wrapped_func(*args, **kwargs):
             kwargs.setdefault("validator", self.validator)
             return fun(*args, **kwargs)
+
         return wrapped_func
 
     def _make_wrapper_cls_global(self, cls):
