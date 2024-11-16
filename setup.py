@@ -5,7 +5,7 @@ from codecs import open
 requires = [
     'requests <3.0, >=2.18.0',
     'urllib3 <2.0, >=1.22',
-    'netifaces>=0.10.5',
+    'psutil'
 ]
 
 packages = [

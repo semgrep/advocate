@@ -2,13 +2,9 @@ import functools
 import fnmatch
 import ipaddress
 import re
+from socket import AddressFamily
 
-try:
-    import netifaces
-    HAVE_NETIFACES = True
-except ImportError:
-    netifaces = None
-    HAVE_NETIFACES = False
+import psutil
 
 from .exceptions import NameserverException, ConfigException
 
@@ -23,20 +19,14 @@ def canonicalize_hostname(hostname):
 
 
 def determine_local_addresses():
-    """Get all IPs that refer to this machine according to netifaces"""
-    if not HAVE_NETIFACES:
-        raise ConfigException("Tried to determine local addresses, "
-                              "but netifaces module was not importable")
+    """Get all IPs that refer to this machine according to psutil"""
     ips = []
-    for interface in netifaces.interfaces():
-        if_families = netifaces.ifaddresses(interface)
-        for family_kind in {netifaces.AF_INET, netifaces.AF_INET6}:
-            addrs = if_families.get(family_kind, [])
-            for addr in (x.get("addr", "") for x in addrs):
-                if family_kind == netifaces.AF_INET6:
-                    # We can't do anything sensible with the scope here
-                    addr = addr.split("%")[0]
-                ips.append(ipaddress.ip_network(addr))
+    for name, nics in psutil.net_if_addrs().items():
+        for nic in nics:
+            if nic.family == AddressFamily.AF_INET:
+                ips.append(ipaddress.ip_network(nic.address))
+            elif nic.family == AddressFamily.AF_INET6:
+                ips.append(ipaddress.ip_network(nic.address.split("%")[0]))
     return ips
 
 
