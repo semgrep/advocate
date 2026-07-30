@@ -1,0 +1,21 @@
+setup.py
+  s_fb911efc9ff4b9::t_c3e819860c642e 7
+test/test_advocate.py
+  s_fb911efc9ff4b9::t_7951dad928c6f1 513,538,555,685
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.18",
+  "base_commit_sha": "d96716c6bdefff57fda2d6b3db2c4025fbad9805",
+  "prompts": {},
+  "sessions": {
+    "s_fb911efc9ff4b9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "566869e5-716b-4468-83dc-7376c7d076d5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Komal Dhull <komal.dhull@semgrep.com>"
+    }
+  }
+}
