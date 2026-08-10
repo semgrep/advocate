@@ -28,6 +28,6 @@ pytest-mock==2.0.0
 raven==6.10.0
 requests-futures==1.0.0
 requests-mock==1.8.0
-werkzeug==1.0.1
+werkzeug==3.0.6
 zipp==1.2.0
 trustme
